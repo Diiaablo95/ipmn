@@ -1,0 +1,3 @@
+IP address Monitor and Notifier
+
+WIP: Small set of Rust utilities to monitor for IP changes and optionally notify the owner about such changes.
