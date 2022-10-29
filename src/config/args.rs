@@ -10,7 +10,7 @@ const URL_ENDPOINT_ARG_LONG: &str = "url-endpoint";
 const URL_ENDPOINT_ARG_SHORT: char = 'u';
 
 #[derive(Debug, Parser)]
-pub(super) struct Config {
+pub struct Config {
     #[clap(long = TG_TOKEN_ARG_LONG, short = TG_TOKEN_ARG_SHORT)]
     pub(super) tg_token: Option<String>,
     #[clap(long = CHAT_ID_ARG_LONG, short = CHAT_ID_ARG_SHORT)]
