@@ -7,10 +7,10 @@ use std::path::Path;
 use check::storage::IpDetails;
 use chrono::Utc;
 
-use config::Config;
+use config::{traits::ConfigProvider, ArgsOrEnvConfigProvider};
 
 pub async fn main() -> Result<(), &'static str> {
-    let config = Config::parse();
+    let config = ArgsOrEnvConfigProvider {}.config().await;
     let check_file_path = Path::new(&config.check_file_path);
 
     let new_ip_address = check::network::new_ip_address(config.url_endpoint)

@@ -1,4 +1,8 @@
+use async_trait::async_trait;
+
 use clap::Parser;
+
+use super::{traits::PartialConfigProvider, PartialConfig};
 
 const TG_TOKEN_ARG_LONG: &str = "tg-token";
 const TG_TOKEN_ARG_SHORT: char = 't';
@@ -10,13 +14,25 @@ const URL_ENDPOINT_ARG_LONG: &str = "url-endpoint";
 const URL_ENDPOINT_ARG_SHORT: char = 'u';
 
 #[derive(Debug, Parser)]
-pub struct Config {
+pub struct ArgsPartialConfigProvider {
     #[clap(long = TG_TOKEN_ARG_LONG, short = TG_TOKEN_ARG_SHORT)]
-    pub(super) tg_token: Option<String>,
+    pub tg_token: Option<String>,
     #[clap(long = CHAT_ID_ARG_LONG, short = CHAT_ID_ARG_SHORT)]
-    pub(super) chat_id: Option<String>,
+    pub chat_id: Option<String>,
     #[clap(long = CHECK_FILE_PATH_ARG_LONG, short = CHECK_FILE_PATH_ARG_SHORT)]
-    pub(super) check_file_path: Option<String>,
+    pub check_file_path: Option<String>,
     #[clap(long = URL_ENDPOINT_ARG_LONG, short = URL_ENDPOINT_ARG_SHORT)]
-    pub(super) url_endpoint: Option<String>,
+    pub url_endpoint: Option<String>,
+}
+
+#[async_trait]
+impl PartialConfigProvider for ArgsPartialConfigProvider {
+    async fn partial_config(&self) -> PartialConfig {
+        PartialConfig {
+            tg_token: self.tg_token.to_owned(),
+            chat_id: self.chat_id.to_owned(),
+            check_file_path: self.check_file_path.to_owned(),
+            url_endpoint: self.url_endpoint.to_owned(),
+        }
+    }
 }
