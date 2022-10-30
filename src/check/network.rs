@@ -21,11 +21,9 @@ impl From<Config> for Ipv4Provider<String> {
 }
 
 #[async_trait]
-impl IpAddressProvider for Ipv4Provider<String> {
-    type IpAddress = Ipv4Addr;
-
-    async fn get_current_ip(&self) -> Self::IpAddress {
-        println!("Fetching new IP information from \"{:?}\"", self.0);
+impl IpAddressProvider<Ipv4Addr> for Ipv4Provider<String> {
+    async fn get_current_ip(&self) -> Ipv4Addr {
+        println!("Fetching new IP information from {:?}", self.0);
 
         let resp = reqwest::get(&self.0)
             .await
