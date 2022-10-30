@@ -1,24 +1,43 @@
-use std::net::IpAddr;
+use async_trait::async_trait;
+use std::fmt::Display;
 use telegram_bot::{Api, ChatId, SendMessage};
 
-pub async fn notify_new_ip_address(
-    ip: IpAddr,
-    tg_token: &str,
-    chat_id: &str,
-) -> Result<(), &'static str> {
-    let parsed_chat_id: i64 = chat_id.parse().expect("Bad chat ID provided.");
+use crate::config::Config;
 
-    let tg_api = Api::new(tg_token);
-    let message = SendMessage::new(
-        ChatId::new(parsed_chat_id),
-        format!("Public IP address changed to {ip}."),
-    );
-    println!("Sending notification to TG chat.");
-    tg_api
-        .send(message)
-        .await
-        .map_err(|_| "Failed to delivery the TG notification.")
-        .map(|_| {
-            println!("TG notification delivered successfully.");
-        })
+use super::traits::IpChangeNotifier;
+
+pub struct TelegramNotifier {
+    chat_id: i64,
+    api: Api,
+}
+
+impl From<Config> for TelegramNotifier {
+    fn from(config: Config) -> Self {
+        Self {
+            chat_id: config.chat_id.parse().expect("Bad chat ID provided."),
+            api: Api::new(config.tg_token),
+        }
+    }
+}
+
+#[async_trait]
+impl<IpAddress> IpChangeNotifier<IpAddress> for TelegramNotifier
+where
+    for<'async_trait> IpAddress: Send + Sync + Display + 'async_trait,
+{
+    type Error = &'static str;
+
+    async fn notify_ip_change(&self, new_address: IpAddress) -> Result<(), Self::Error> {
+        let message = SendMessage::new(
+            ChatId::new(self.chat_id),
+            format!("Public IP address changed to {new_address}."),
+        );
+        println!("Sending notification to TG chat.");
+
+        self.api
+            .send(message)
+            .await
+            .map_err(|_| "Failed to delivery the Telegram notification.")
+            .map(|_| println!("TG notification delivered successfully."))
+    }
 }
