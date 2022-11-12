@@ -22,6 +22,8 @@ impl PartialConfigProvider for EnvPartialConfigProvider {
             chat_id,
             check_file_path,
             url_endpoint,
+            // Dry run can only be passed as a CLI argument, not as an env
+            dry_run: None,
         }
     }
 }

@@ -18,6 +18,7 @@ pub struct PartialConfig {
     pub chat_id: Option<String>,
     pub check_file_path: Option<String>,
     pub url_endpoint: Option<String>,
+    pub dry_run: Option<bool>,
 }
 
 #[derive(Clone)]
@@ -26,6 +27,7 @@ pub struct Config {
     pub chat_id: String,
     pub check_file_path: String,
     pub url_endpoint: Option<String>,
+    pub dry_run: bool,
 }
 
 pub struct ArgsOrEnvConfigProvider;
@@ -49,12 +51,14 @@ impl ConfigProvider for ArgsOrEnvConfigProvider {
             .or(envs.check_file_path)
             .expect("No CHECK_FILE_PATH specified.");
         let url_endpoint = args.url_endpoint.or(envs.url_endpoint);
+        let dry_run = args.dry_run.or(envs.dry_run).unwrap_or(false);
 
         Config {
             tg_token,
             chat_id,
             check_file_path,
             url_endpoint,
+            dry_run,
         }
     }
 }
