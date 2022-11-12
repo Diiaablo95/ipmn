@@ -48,7 +48,9 @@ pub async fn main() -> Result<(), &'static str> {
         new_attempt.last_delivery_success = true;
     }
 
-    attempt_storage.save_new_attempt(new_attempt).await;
+    if !config.dry_run {
+        attempt_storage.save_new_attempt(new_attempt).await;
+    }
 
     Ok(())
 }
