@@ -42,15 +42,17 @@ pub async fn main() -> Result<(), &'static str> {
         last_delivery_success: false,
     };
 
+    if config.dry_run {
+        return Ok(());
+    }
+
     let delivery_result = telegram_notifier.notify_ip_change(new_ip_address).await;
 
     if delivery_result.is_ok() {
         new_attempt.last_delivery_success = true;
     }
 
-    if !config.dry_run {
-        attempt_storage.save_new_attempt(new_attempt).await;
-    }
+    attempt_storage.save_new_attempt(new_attempt).await;
 
     Ok(())
 }
