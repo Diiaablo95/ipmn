@@ -15,6 +15,7 @@ use chrono::Utc;
 use config::{traits::ConfigProvider, ArgsOrEnvConfigProvider};
 
 pub async fn main() -> Result<(), &'static str> {
+    env_logger::init();
     let config = ArgsOrEnvConfigProvider {}.config().await;
 
     let ip_address_provider = Ipv4Provider::from(config.clone());
@@ -30,7 +31,7 @@ pub async fn main() -> Result<(), &'static str> {
     if let Some(attempt) = last_attempt {
         // Skip only if IP has not changed and change notification was correctly delivered.
         if attempt.ip_address == new_ip_address && attempt.last_delivery_success {
-            println!("IP address did not change since {}.", attempt.datetime);
+            log::info!("IP address did not change since {:?}", attempt.datetime);
             return Ok(());
         }
     }
@@ -43,7 +44,7 @@ pub async fn main() -> Result<(), &'static str> {
     };
 
     if config.dry_run {
-        println!("Dry run detected. Execution is stopping here and will not send a notification nor update the local info.");
+        log::info!("Dry run detected. Execution is stopping here and will not send a notification nor update the local info.");
         return Ok(());
     }
 

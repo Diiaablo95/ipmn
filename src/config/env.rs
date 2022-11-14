@@ -17,13 +17,15 @@ impl PartialConfigProvider for EnvPartialConfigProvider {
         let check_file_path = std::env::var(CHECK_FILE_PATH_KEY).ok();
         let url_endpoint = std::env::var(URL_ENDPOINT_KEY).ok();
 
-        PartialConfig {
+        let config = PartialConfig {
             tg_token,
             chat_id,
             check_file_path,
             url_endpoint,
             // Dry run can only be passed as a CLI argument, not as an env
             dry_run: None,
-        }
+        };
+        log::trace!("Arguments passed from the environment: {:?}", config);
+        config
     }
 }

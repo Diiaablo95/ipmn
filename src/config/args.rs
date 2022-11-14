@@ -32,12 +32,14 @@ pub struct ArgsPartialConfigProvider {
 #[async_trait]
 impl PartialConfigProvider for ArgsPartialConfigProvider {
     async fn partial_config(&self) -> PartialConfig {
-        PartialConfig {
+        let config = PartialConfig {
             tg_token: self.tg_token.to_owned(),
             chat_id: self.chat_id.to_owned(),
             check_file_path: self.check_file_path.to_owned(),
             url_endpoint: self.url_endpoint.to_owned(),
             dry_run: Some(self.dry_run),
-        }
+        };
+        log::trace!("Arguments passed from the command line: {:?}", config);
+        config
     }
 }
