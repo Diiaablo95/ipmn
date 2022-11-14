@@ -26,7 +26,7 @@ pub struct ArgsPartialConfigProvider {
     #[clap(long = URL_ENDPOINT_ARG_LONG, short = URL_ENDPOINT_ARG_SHORT)]
     pub url_endpoint: Option<String>,
     #[clap(long = DRY_RUN_ARG_LONG, short = DRY_RUN_ARG_SHORT)]
-    pub dry_run: Option<bool>,
+    pub dry_run: bool,
 }
 
 #[async_trait]
@@ -37,7 +37,7 @@ impl PartialConfigProvider for ArgsPartialConfigProvider {
             chat_id: self.chat_id.to_owned(),
             check_file_path: self.check_file_path.to_owned(),
             url_endpoint: self.url_endpoint.to_owned(),
-            dry_run: self.dry_run,
+            dry_run: Some(self.dry_run),
         }
     }
 }

@@ -43,6 +43,7 @@ pub async fn main() -> Result<(), &'static str> {
     };
 
     if config.dry_run {
+        println!("Dry run detected. Execution is stopping here and will not send a notification nor update the local info.");
         return Ok(());
     }
 
