@@ -12,7 +12,7 @@ pub mod args;
 pub mod env;
 pub mod traits;
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct PartialConfig {
     pub tg_token: Option<String>,
     pub chat_id: Option<String>,
@@ -21,7 +21,7 @@ pub struct PartialConfig {
     pub dry_run: Option<bool>,
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Config {
     pub tg_token: String,
     pub chat_id: String,
@@ -53,12 +53,17 @@ impl ConfigProvider for ArgsOrEnvConfigProvider {
         let url_endpoint = args.url_endpoint.or(envs.url_endpoint);
         let dry_run = args.dry_run.or(envs.dry_run).unwrap_or(false);
 
-        Config {
+        let config = Config {
             tg_token,
             chat_id,
             check_file_path,
             url_endpoint,
             dry_run,
-        }
+        };
+        log::info!(
+            "Arguments passed from the command line and then the environment: {:?}",
+            config
+        );
+        config
     }
 }

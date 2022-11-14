@@ -1,5 +1,5 @@
 use std::{
-    fmt::Display,
+    fmt::{Debug, Display},
     fs,
     io::{BufRead, BufReader, Write},
     path::PathBuf,
@@ -23,11 +23,15 @@ impl From<Config> for FileSystemUpdatesStorage {
 #[async_trait]
 impl<IpAddress> UpdatesStorage<IpAddress> for FileSystemUpdatesStorage
 where
-    for<'async_trait> IpAddress: Send + Sync + FromStr + Display + 'async_trait,
+    for<'async_trait> IpAddress: Send + Sync + 'async_trait + FromStr + Debug + Display,
 {
     async fn get_last_ip_attempt(&self) -> Option<IpFetchAttemptInfo<IpAddress>> {
         let file = fs::File::open(&self.0);
-        if file.is_err() {
+        if let Err(err) = file {
+            log::warn!(
+                "Error while opening check file: {:?}. Considering as it is does not exist.",
+                err
+            );
             // TODO: handle other possible errors
             return None;
         }
@@ -37,11 +41,16 @@ where
     }
 
     async fn save_new_attempt(&self, new_attempt: IpFetchAttemptInfo<IpAddress>) {
+        log::info!("Saving new attempt to file: {:?}...", new_attempt);
         let datetime_line = new_attempt.datetime.to_rfc2822();
         let ip_line = new_attempt.ip_address.to_string();
 
         // Create parent directories if not existing.
         if let Some(parent_path) = self.0.parent() {
+            log::debug!(
+                "Parent path '{:?}' does not exist. Creating one...",
+                parent_path
+            );
             fs::create_dir_all(parent_path).expect("Failed to initialize parent directories.");
         }
 
@@ -58,5 +67,6 @@ where
         if new_attempt.last_delivery_success {
             writeln!(file, "1").expect("Failed to write alert information to check file.");
         }
+        log::info!("New attempt saved!");
     }
 }
