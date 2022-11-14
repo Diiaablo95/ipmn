@@ -42,6 +42,11 @@ pub async fn main() -> Result<(), &'static str> {
         last_delivery_success: false,
     };
 
+    if config.dry_run {
+        println!("Dry run detected. Execution is stopping here and will not send a notification nor update the local info.");
+        return Ok(());
+    }
+
     let delivery_result = telegram_notifier.notify_ip_change(new_ip_address).await;
 
     if delivery_result.is_ok() {

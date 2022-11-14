@@ -12,6 +12,8 @@ const CHECK_FILE_PATH_ARG_LONG: &str = "check-file-path";
 const CHECK_FILE_PATH_ARG_SHORT: char = 'f';
 const URL_ENDPOINT_ARG_LONG: &str = "url-endpoint";
 const URL_ENDPOINT_ARG_SHORT: char = 'u';
+const DRY_RUN_ARG_LONG: &str = "dry";
+const DRY_RUN_ARG_SHORT: char = 'd';
 
 #[derive(Debug, Parser)]
 pub struct ArgsPartialConfigProvider {
@@ -23,6 +25,8 @@ pub struct ArgsPartialConfigProvider {
     pub check_file_path: Option<String>,
     #[clap(long = URL_ENDPOINT_ARG_LONG, short = URL_ENDPOINT_ARG_SHORT)]
     pub url_endpoint: Option<String>,
+    #[clap(long = DRY_RUN_ARG_LONG, short = DRY_RUN_ARG_SHORT)]
+    pub dry_run: bool,
 }
 
 #[async_trait]
@@ -33,6 +37,7 @@ impl PartialConfigProvider for ArgsPartialConfigProvider {
             chat_id: self.chat_id.to_owned(),
             check_file_path: self.check_file_path.to_owned(),
             url_endpoint: self.url_endpoint.to_owned(),
+            dry_run: Some(self.dry_run),
         }
     }
 }
