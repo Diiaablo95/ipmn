@@ -23,13 +23,13 @@ impl From<Config> for Ipv4Provider<String> {
 #[async_trait]
 impl IpAddressProvider<Ipv4Addr> for Ipv4Provider<String> {
     async fn get_current_ip(&self) -> Ipv4Addr {
-        println!("Fetching new IP information from {:?}", self.0);
+        log::info!("Fetching new IP information from {:?}", self.0);
 
         let resp = reqwest::get(&self.0)
             .await
             .expect("Something wrong in the request");
 
-        println!("Response body received: {:#?}", resp);
+        log::debug!("Response body received: {:#?}", resp);
 
         let resp_bytes = resp
             .bytes()
@@ -41,7 +41,7 @@ impl IpAddressProvider<Ipv4Addr> for Ipv4Provider<String> {
             .parse()
             .expect("Failed to parse the response into an IP address");
 
-        println!("Parsed IP address: {parsed_ip_address}");
+        log::info!("Parsed IP address: {:?}", parsed_ip_address);
         parsed_ip_address
     }
 }

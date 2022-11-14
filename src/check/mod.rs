@@ -1,4 +1,4 @@
-use std::{fmt::Display, str::FromStr};
+use std::{fmt::Debug, str::FromStr};
 
 use chrono::{DateTime, Utc};
 
@@ -6,6 +6,7 @@ pub mod network;
 pub mod storage;
 pub mod traits;
 
+#[derive(Debug)]
 pub struct IpFetchAttemptInfo<IpAddress> {
     pub ip_address: IpAddress,
     pub datetime: DateTime<Utc>,
@@ -14,7 +15,7 @@ pub struct IpFetchAttemptInfo<IpAddress> {
 
 impl<IpAddress> IpFetchAttemptInfo<IpAddress>
 where
-    IpAddress: Send + Sync + FromStr + Display,
+    IpAddress: Send + Sync + FromStr + Debug,
 {
     pub fn parse(mut details: impl Iterator<Item = Result<String, std::io::Error>>) -> Self {
         let datetime_raw = details
@@ -37,7 +38,12 @@ where
 
         let last_delivery_success = details.next().is_some();
 
-        println!("Parsed datetime: {datetime} - Parsed IP address: {ip_address} - Succeeded: {last_delivery_success}");
+        log::info!(
+            "Parsed datetime: {:?} - Parsed IP address: {:?} - Parsed success: {:?}",
+            datetime,
+            ip_address,
+            last_delivery_success
+        );
 
         Self {
             ip_address,
