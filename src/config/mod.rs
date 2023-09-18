@@ -19,6 +19,7 @@ pub struct PartialConfig {
     pub check_file_path: Option<String>,
     pub url_endpoint: Option<String>,
     pub dry_run: Option<bool>,
+    pub bind_address: Option<String>,
 }
 
 #[derive(Clone, Debug)]
@@ -28,6 +29,7 @@ pub struct Config {
     pub check_file_path: String,
     pub url_endpoint: Option<String>,
     pub dry_run: bool,
+    pub bind_address: Option<String>,
 }
 
 pub struct ArgsOrEnvConfigProvider;
@@ -52,6 +54,7 @@ impl ConfigProvider for ArgsOrEnvConfigProvider {
             .expect("No CHECK_FILE_PATH specified.");
         let url_endpoint = args.url_endpoint.or(envs.url_endpoint);
         let dry_run = args.dry_run.or(envs.dry_run).unwrap_or(false);
+        let bind_address = args.bind_address.or(envs.bind_address);
 
         let config = Config {
             tg_token,
@@ -59,6 +62,7 @@ impl ConfigProvider for ArgsOrEnvConfigProvider {
             check_file_path,
             url_endpoint,
             dry_run,
+            bind_address,
         };
         log::info!(
             "Arguments passed from the command line and then the environment: {:?}",

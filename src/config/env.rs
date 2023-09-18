@@ -24,6 +24,8 @@ impl PartialConfigProvider for EnvPartialConfigProvider {
             url_endpoint,
             // Dry run can only be passed as a CLI argument, not as an env
             dry_run: None,
+            // Bind address can only be passed as a CLI argument, not as an env
+            bind_address: None,
         };
         log::trace!("Arguments passed from the environment: {:?}", config);
         config
