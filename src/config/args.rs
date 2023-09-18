@@ -14,6 +14,8 @@ const URL_ENDPOINT_ARG_LONG: &str = "url-endpoint";
 const URL_ENDPOINT_ARG_SHORT: char = 'u';
 const DRY_RUN_ARG_LONG: &str = "dry";
 const DRY_RUN_ARG_SHORT: char = 'd';
+const BIND_ADDRESS_ARG_LONG: &str = "bind-address";
+const BIND_ADDRESS_ARG_SHORT: char = 'b';
 
 #[derive(Debug, Parser)]
 pub struct ArgsPartialConfigProvider {
@@ -27,6 +29,8 @@ pub struct ArgsPartialConfigProvider {
     pub url_endpoint: Option<String>,
     #[clap(long = DRY_RUN_ARG_LONG, short = DRY_RUN_ARG_SHORT)]
     pub dry_run: bool,
+    #[clap(long = BIND_ADDRESS_ARG_LONG, short = BIND_ADDRESS_ARG_SHORT)]
+    pub bind_address: Option<String>,
 }
 
 #[async_trait]
@@ -38,6 +42,7 @@ impl PartialConfigProvider for ArgsPartialConfigProvider {
             check_file_path: self.check_file_path.to_owned(),
             url_endpoint: self.url_endpoint.to_owned(),
             dry_run: Some(self.dry_run),
+            bind_address: self.bind_address.to_owned(),
         };
         log::trace!("Arguments passed from the command line: {:?}", config);
         config
